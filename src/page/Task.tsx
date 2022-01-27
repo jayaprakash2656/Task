@@ -3,13 +3,13 @@ import AddUserForm from "../component/addUserForm";
 import EditUserForm from "../component/editUserForm";
 import UserTable from "../component/userTable";
 import { IBaseUser, IUser } from "../component/interface";
-import { Modal, Button } from 'antd';
+import { message } from 'antd';
 
 import "./style.css";
 
 const defaultUsers: Array<IUser> = [
-  { Project: "lily", name: "lily hh", id: 1, Comments: "None" },
-  { Project: "bob", name: "bob haha", id: 2, Comments: "None" }
+  { Project: "Project 1", name: "lily hh", id: 1, Comments: "None" },
+  { Project: "Project 2", name: "bob haha", id: 2, Comments: "None" }
 ];
 const initCurrentUser: IUser = { Project: "", name: "", Comments: "", id: 0 };
 
@@ -18,13 +18,12 @@ function Task() {
   const [editUser, setEditUser] = useState(initCurrentUser);
   const [editing, setEdit] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalVisibleAdd, setIsModalVisibleAdd] = useState(false);
-
-  const handleAddBtn = () =>{
-    setIsModalVisibleAdd(true);
-  }
   const onAddUser = (newUser: IBaseUser) => {
-    const id = users.length + 1;
+    var id = 1;
+    users.map(i => {
+      id = i.id + 1
+      return null;
+    })
     setUsers([...users, { ...newUser, id }]);
   };
   const onCurrentUser = (user: IUser) => {
@@ -37,34 +36,30 @@ function Task() {
     setUsers(users.map(i => (i.id === id ? newUser : i)));
   };
   const onDeleteUser = (currentUser: IUser) => {
+    console.log('delete!')
     setUsers(users.filter(i => i.id !== currentUser.id));
+    message.error(`${currentUser.name} deleted successfully`);
   };
   return (
     <>
       <h3>Task</h3>
-      <br/>
+      <br />
       <div className="user-flex-wrapper">
-      <Modal title="" visible={isModalVisibleAdd} footer={null}>
-      <AddUserForm setIsModalVisibleAdd = {setIsModalVisibleAdd} onAddUser={onAddUser} />
-      </Modal>
-      <Button onClick={handleAddBtn}>
-          Create Tasks
-      </Button>
+
+        <AddUserForm onAddUser={onAddUser} />
       </div>
-      <br/>
+      <br />
       <div className="user-flex-wrapper">
-        <Modal title="" visible={isModalVisible} footer={null}>
         {editing ? (
           <EditUserForm
             user={editUser}
             onUpdateUser={onUpdateUser}
-            setEdit={setEdit}
-            setIsModalVisible = {setIsModalVisible}
+            setIsModalVisible={setIsModalVisible}
+            visible={isModalVisible}
           />
         ) : (
           null
         )}
-      </Modal>
         <UserTable
           users={users}
           onEdit={onCurrentUser}

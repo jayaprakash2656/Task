@@ -1,6 +1,5 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-// import '../index.css';
 import { Layout, Menu } from 'antd';
 import Task from '../page/Task'
 import {
@@ -8,8 +7,9 @@ import {
   MenuFoldOutlined,
   UserOutlined,
   VideoCameraOutlined,
-  UploadOutlined,
 } from '@ant-design/icons';
+
+import './common.css'
 
 const { Header, Sider, Content } = Layout;
 
@@ -26,15 +26,10 @@ class SiderDemo extends React.Component {
 
   render() {
     return (
-      <Layout style={{height:"100vh"}}>
+      <Layout style={{ height: "100vh" }}>
         <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-          <div style={{
-            textAlign: 'center',
-            fontSize: '22px',
-            color: 'whitesmoke',
-            fontStyle: 'italic',
-          }} className="logo">
-            <span>Company Name</span>
+          <div className="logo off-logo">
+            <span>{this.state.collapsed ? 'C' : 'Company Name'}</span>
           </div>
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
             <Menu.Item key="1" icon={<UserOutlined />}>
@@ -60,7 +55,7 @@ class SiderDemo extends React.Component {
               minHeight: 280,
             }}
           >
-            <Task/>
+            <Task />
           </Content>
         </Layout>
       </Layout>

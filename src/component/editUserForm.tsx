@@ -1,68 +1,76 @@
 import React, { useState, useEffect } from "react";
 import { IUser } from "./interface";
+import { Select, Input, Modal, message } from 'antd';
+
+const { Option } = Select;
+const { TextArea } = Input;
 
 interface IProps {
   user: IUser;
   onUpdateUser: (id: number, user: IUser) => void;
-  setEdit: (bool: boolean) => void;
   setIsModalVisible: (bool: boolean) => void;
+  visible: boolean
 }
 
 export default function EditUserForm(props: IProps) {
   const [user, setUser] = useState(props.user);
   useEffect(() => setUser(props.user), [props]);
-  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onFormSubmit = (e: any) => {
     e.preventDefault();
     if (!user.Project || !user.name) {
       console.log("em");
       return false;
     }
+    message.success(`${user.name} updated successfully`);
     props.onUpdateUser(user.id, user);
   };
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onInputChange = (e: any) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
+  function handleChange(value: any) {
+    setUser({ ...user, 'Project': value });
+  }
+  const handleCancel = () => {
+    props.setIsModalVisible(!props.visible)
+  }
   return (
-    <div className="user-form">
-      <h1>edit users</h1>
-      <form className="form-edit" onSubmit={onFormSubmit}>
-        <div className="form-row">
-          <label>Name</label>
-          <input
-            type="text"
-            placeholder="please input name"
-            name="name"
-            value={user.name}
-            onChange={onInputChange}
-          />
-          {/* <div className="form-error">too short</div> */}
-        </div>
-        <div className="form-row">
-          <label>Project</label>
-          <input
-            type="text"
-            placeholder="please input Project"
-            name="Project"
-            value={user.Project}
-            onChange={onInputChange}
-          />
-        </div>
-        <div className="form-row">
-          <label>Comments</label>
-          <input
-            type="text"
-            placeholder="please input Comments"
-            name="Comments"
-            value={user.Comments}
-            onChange={onInputChange}
-          />
-        </div>
-        <div className="form-row">
-          <button onClick={() => {props.setIsModalVisible(false)}}>Update</button>
-          <button onClick={() => {props.setEdit(false); props.setIsModalVisible(false)}}>Cancel</button>
-        </div>
-      </form>
-    </div>
+    <Modal title="Edit user" visible={props.visible} onOk={onFormSubmit}
+      onCancel={handleCancel}>
+      <div className="user-form">
+        <form className="form-edit">
+          <div className="form-row">
+            <label>Name</label>
+            <input
+              type="text"
+              placeholder="Enter Name"
+              name="name"
+              value={user.name}
+              onChange={onInputChange}
+            />
+          </div>
+          <div className="form-row">
+            <label>Project</label>
+            <Select defaultValue="Project 1" onChange={handleChange} style={{ width: '100%' }} allowClear>
+              <Option value="">None</Option>
+              <Option value="Project 1">Project 1</Option>
+              <Option value="Project 2">Project 2</Option>
+            </Select>
+          </div>
+          <div className="form-row">
+            <label>Comments</label>
+            <TextArea
+              placeholder="Enter Comments"
+              name="Comments"
+              rows={6}
+              maxLength={500}
+              showCount
+              value={user.Comments}
+              onChange={onInputChange}
+            />
+          </div>
+        </form>
+      </div>
+    </Modal>
   );
 }
